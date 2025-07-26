@@ -1,40 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: ''
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
 
-  // Mock users database for demo
-  const mockUsers = [
-    { email: 'john@example.com', password: 'password123' },
-    { email: 'admin@healthcare.com', password: 'admin123' }
-  ];
+  // // Mock users database for demo
+  // const mockUsers = [
+  //   { email: "john@example.com", password: "password123" },
+  //   { email: "admin@healthcare.com", password: "admin123" },
+  // ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear errors when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
     if (apiError) {
-      setApiError('');
+      setApiError("");
     }
   };
 
@@ -56,52 +58,53 @@ const Login = () => {
 
     // Email validation
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (!validatePassword(formData.password)) {
-      newErrors.password = 'Password must be at least 6 characters long';
+      newErrors.password = "Password must be at least 6 characters long";
     }
 
     // Signup specific validations
     if (!isLogin) {
       // First name validation
       if (!formData.firstName.trim()) {
-        newErrors.firstName = 'First name is required';
+        newErrors.firstName = "First name is required";
       } else if (!validateName(formData.firstName)) {
-        newErrors.firstName = 'First name must be at least 2 characters and contain only letters';
+        newErrors.firstName =
+          "First name must be at least 2 characters and contain only letters";
       }
 
       // Last name validation
       if (!formData.lastName.trim()) {
-        newErrors.lastName = 'Last name is required';
+        newErrors.lastName = "Last name is required";
       } else if (!validateName(formData.lastName)) {
-        newErrors.lastName = 'Last name must be at least 2 characters and contain only letters';
+        newErrors.lastName =
+          "Last name must be at least 2 characters and contain only letters";
       }
 
       // Password confirmation validation
       if (!formData.confirmPassword) {
-        newErrors.confirmPassword = 'Please confirm your password';
+        newErrors.confirmPassword = "Please confirm your password";
       } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
+        newErrors.confirmPassword = "Passwords do not match";
       }
 
       // Additional password strength for signup
       if (formData.password && formData.password.length < 8) {
-        newErrors.password = 'Password must be at least 8 characters long for new accounts';
-      } else if (formData.password && !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-        newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
-      }
-
-      // Check if email already exists (mock check)
-      const emailExists = mockUsers.some(user => user.email.toLowerCase() === formData.email.toLowerCase());
-      if (emailExists && !newErrors.email) {
-        newErrors.email = 'An account with this email already exists';
+        newErrors.password =
+          "Password must be at least 8 characters long for new accounts";
+      } else if (
+        formData.password &&
+        !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)
+      ) {
+        newErrors.password =
+          "Password must contain at least one uppercase letter, one lowercase letter, and one number";
       }
     }
 
@@ -111,8 +114,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setApiError('');
-    
+    setApiError("");
+
     if (!validateForm()) {
       return;
     }
@@ -121,47 +124,38 @@ const Login = () => {
 
     try {
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       if (isLogin) {
-        // Login validation
-        const user = mockUsers.find(
-          u => u.email.toLowerCase() === formData.email.toLowerCase() && 
-               u.password === formData.password
-        );
+        // TODO: Replace with actual API call to your backend
+        console.log("Login attempt:", { email: formData.email });
+        alert("Login successful! ");
+         // Navigate to select-service page after successful login
+        navigate('/select-service');
 
-        if (!user) {
-          setApiError('Invalid email or password. Please check your credentials and try again.');
-          return;
-        }
-
-        // Login successful
-        console.log('Login successful:', { email: formData.email });
-        alert('Login successful! Redirecting to dashboard...');
-        
       } else {
-        // Signup process
-        console.log('Signup successful:', {
+        // TODO: Replace with actual API call to your backend
+        console.log("Signup attempt:", {
           firstName: formData.firstName,
           lastName: formData.lastName,
-          email: formData.email
+          email: formData.email,
         });
-        
-        alert('Account created successfully! You can now log in.');
-        
+
+        alert("Account created successfully! You can now log in.");
+
         // Switch to login mode and clear form
         setIsLogin(true);
         setFormData({
           email: formData.email, // Keep email for convenience
-          password: '',
-          confirmPassword: '',
-          firstName: '',
-          lastName: ''
+          password: "",
+          confirmPassword: "",
+          firstName: "",
+          lastName: "",
         });
       }
     } catch (error) {
-      console.error('Authentication error:', error);
-      setApiError('Something went wrong. Please try again later.');
+      console.error("Authentication error:", error);
+      setApiError("Something went wrong. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -170,21 +164,23 @@ const Login = () => {
   const toggleMode = () => {
     setIsLogin(!isLogin);
     setFormData({
-      email: '',
-      password: '',
-      confirmPassword: '',
-      firstName: '',
-      lastName: ''
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
     });
     setErrors({});
-    setApiError('');
+    setApiError("");
   };
 
   const inputClasses = (fieldName) => {
-    const baseClasses = "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200";
+    const baseClasses =
+      "w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200";
     const errorClasses = "border-red-500 focus:ring-red-200 bg-red-50";
-    const normalClasses = "border-gray-300 focus:ring-blue-200 focus:border-blue-500";
-    
+    const normalClasses =
+      "border-gray-300 focus:ring-blue-200 focus:border-blue-500";
+
     return `${baseClasses} ${errors[fieldName] ? errorClasses : normalClasses}`;
   };
 
@@ -194,23 +190,43 @@ const Login = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg
+              className="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            {isLogin ? 'Welcome Back' : 'Create Account'}
+            {isLogin ? "Welcome Back" : "Create Account"}
           </h2>
           <p className="text-gray-600 text-sm">
-            {isLogin ? 'Please sign in to your account' : 'Please fill in your information to get started'}
+            {isLogin
+              ? "Please sign in to your account"
+              : "Please fill in your information to get started"}
           </p>
         </div>
 
         {/* API Error Message */}
         {apiError && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
-            <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            <svg
+              className="w-5 h-5 mr-2 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
             </svg>
             <span className="text-sm">{apiError}</span>
           </div>
@@ -221,7 +237,10 @@ const Login = () => {
           {!isLogin && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   First Name
                 </label>
                 <input
@@ -230,13 +249,21 @@ const Login = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  className={inputClasses('firstName')}
+                  className={inputClasses("firstName")}
                   placeholder="John"
                 />
                 {errors.firstName && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     {errors.firstName}
                   </p>
@@ -244,7 +271,10 @@ const Login = () => {
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Last Name
                 </label>
                 <input
@@ -253,13 +283,21 @@ const Login = () => {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className={inputClasses('lastName')}
+                  className={inputClasses("lastName")}
                   placeholder="Doe"
                 />
                 {errors.lastName && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     {errors.lastName}
                   </p>
@@ -270,7 +308,10 @@ const Login = () => {
 
           {/* Email Field */}
           <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
               Email Address
             </label>
             <input
@@ -279,13 +320,21 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={inputClasses('email')}
+              className={inputClasses("email")}
               placeholder="john@example.com"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-600 flex items-center">
-                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg
+                  className="w-4 h-4 mr-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 {errors.email}
               </p>
@@ -294,7 +343,10 @@ const Login = () => {
 
           {/* Password Field */}
           <div>
-            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-semibold text-gray-700 mb-2"
+            >
               Password
             </label>
             <input
@@ -303,13 +355,23 @@ const Login = () => {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              className={inputClasses('password')}
-              placeholder={isLogin ? "Enter your password" : "Create a strong password"}
+              className={inputClasses("password")}
+              placeholder={
+                isLogin ? "Enter your password" : "Create a strong password"
+              }
             />
             {errors.password && (
               <p className="mt-1 text-sm text-red-600 flex items-center">
-                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg
+                  className="w-4 h-4 mr-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 {errors.password}
               </p>
@@ -319,7 +381,10 @@ const Login = () => {
           {/* Confirm Password Field for Signup */}
           {!isLogin && (
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
                 Confirm Password
               </label>
               <input
@@ -328,13 +393,21 @@ const Login = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className={inputClasses('confirmPassword')}
+                className={inputClasses("confirmPassword")}
                 placeholder="Confirm your password"
               />
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-600 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   {errors.confirmPassword}
                 </p>
@@ -346,10 +419,16 @@ const Login = () => {
           {isLogin && (
             <div className="flex items-center justify-between">
               <label className="flex items-center cursor-pointer">
-                <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <button type="button" className="text-sm text-blue-600 hover:text-blue-500 transition-colors cursor-pointer">
+              <button
+                type="button"
+                className="text-sm text-blue-600 hover:text-blue-500 transition-colors cursor-pointer"
+              >
                 Forgot Password?
               </button>
             </div>
@@ -363,14 +442,32 @@ const Login = () => {
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Processing...
               </div>
+            ) : isLogin ? (
+              "Sign In"
             ) : (
-              isLogin ? 'Sign In' : 'Create Account'
+              "Create Account"
             )}
           </button>
         </form>
@@ -384,7 +481,7 @@ const Login = () => {
               onClick={toggleMode}
               className="text-blue-600 hover:text-blue-500 font-semibold transition-colors underline cursor-pointer"
             >
-              {isLogin ? 'Sign Up' : 'Sign In'}
+              {isLogin ? "Sign Up" : "Sign In"}
             </button>
           </p>
         </div>
