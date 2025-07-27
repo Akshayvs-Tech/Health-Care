@@ -23,6 +23,8 @@ db.once('open', () => {
 // Routes
 app.use('/api', require('./routes/auth'));
 
+
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
