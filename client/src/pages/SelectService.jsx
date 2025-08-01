@@ -101,7 +101,13 @@ const SelectService = () => {
                 <li>• First aid guidance</li>
                 <li>• Medicine information</li>
               </ul>
-              <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold">
+              <button
+                className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-semibold"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleServiceSelect("consultation");
+                }}
+              >
                 Start Chat
               </button>
             </div>
